@@ -41,6 +41,12 @@ module.exports = {
       new CopyWebpackPlugin([{ from: path.join(cesiumSource, 'ThirdParty/Workers'), to: 'ThirdParty/Workers' }]),
       new webpack.DefinePlugin({
         CESIUM_BASE_URL: JSON.stringify('./')
+      }),
+      new webpack.ProvidePlugin({
+        $:"jquery",
+        jQuery:"jquery",
+        "window.jQuery":"jquery",
+        Popper:["popper.js","default"]
       })
     ],
     module: {
