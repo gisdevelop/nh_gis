@@ -16,17 +16,24 @@
             <el-dropdown-item command="f" divided>清除</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <el-dropdown split-button type="primary" @command="handleCommand_spatial">
+        <el-dropdown
+          split-button
+          type="primary"
+          @command="handleCommand_spatial"
+        >
           空间分析
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="a">开挖分析</el-dropdown-item>
-         
           </el-dropdown-menu>
         </el-dropdown>
-        <el-dropdown split-button type="primary" @command="handleCommand_dataInit">
+        <el-dropdown
+          split-button
+          type="primary"
+          @command="handleCommand_dataInit"
+        >
           模型加载
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="a">加载BIM</el-dropdown-item>
+            <el-dropdown-item command="bimLoad">加载BIM</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </el-header>
@@ -119,60 +126,88 @@ export default {
       if (command == "c") {
         drawTool.drawPolygon(
           this.Cesium,
-          this.glbalVar.gbViewer,function (positions) {
-          var wgs84_positions = [];
-          for (var i = 0; i < positions.length; i++) {
-            var wgs84_point = _this.Cartesian3_to_WGS84({
-              x: positions[i].x,
-              y: positions[i].y,
-              z: positions[i].z,
-            });
-            wgs84_positions.push(wgs84_point);
+          this.glbalVar.gbViewer,
+          function (positions) {
+            var wgs84_positions = [];
+            for (var i = 0; i < positions.length; i++) {
+              var wgs84_point = _this.Cartesian3_to_WGS84({
+                x: positions[i].x,
+                y: positions[i].y,
+                z: positions[i].z,
+              });
+              wgs84_positions.push(wgs84_point);
+            }
+            console.log(wgs84_positions);
           }
-          console.log(wgs84_positions);
-        });
+        );
       }
       if (command == "d") {
-        drawTool.drawRect(this.Cesium,
-          this.glbalVar.gbViewer,function (positions) {
-          var wgs84_positions = [];
-          for (var i = 0; i < positions.length; i++) {
-            var wgs84_point = _this.Cartesian3_to_WGS84({
-              x: positions[i].x,
-              y: positions[i].y,
-              z: positions[i].z,
-            });
-            wgs84_positions.push(wgs84_point);
+        drawTool.drawRect(
+          this.Cesium,
+          this.glbalVar.gbViewer,
+          function (positions) {
+            var wgs84_positions = [];
+            for (var i = 0; i < positions.length; i++) {
+              var wgs84_point = _this.Cartesian3_to_WGS84({
+                x: positions[i].x,
+                y: positions[i].y,
+                z: positions[i].z,
+              });
+              wgs84_positions.push(wgs84_point);
+            }
+            console.log(wgs84_positions);
           }
-          console.log(wgs84_positions);
-        });
+        );
       }
       if (command == "e") {
-        drawTool.circleDraw(this.Cesium,
-          this.glbalVar.gbViewer,function (positions) {
-          var wgs84_positions = [];
-          for (var i = 0; i < positions.length; i++) {
-            var wgs84_point = _this.Cartesian3_to_WGS84({
-              x: positions[i].x,
-              y: positions[i].y,
-              z: positions[i].z,
-            });
-            wgs84_positions.push(wgs84_point);
+        drawTool.circleDraw(
+          this.Cesium,
+          this.glbalVar.gbViewer,
+          function (positions) {
+            var wgs84_positions = [];
+            for (var i = 0; i < positions.length; i++) {
+              var wgs84_point = _this.Cartesian3_to_WGS84({
+                x: positions[i].x,
+                y: positions[i].y,
+                z: positions[i].z,
+              });
+              wgs84_positions.push(wgs84_point);
+            }
+            console.log(wgs84_positions);
           }
-          console.log(wgs84_positions);
-        });
+        );
       }
       if (command == "f") {
         drawTool.clearHandle(this.glbalVar.gbViewer);
       }
     },
-    handleCommand_spatial(command){
-
-
-    },
-    handleCommand_dataInit(command)
-    {
-
+    handleCommand_spatial(command) {},
+    handleCommand_dataInit(command) {
+      if (command == "bimLoad") {
+        var modelMatrix = this.Cesium.Transforms.eastNorthUpToFixedFrame(
+          this.Cesium.Cartesian3.fromDegrees(
+            120.62898254394531,
+            30.02804946899414,
+            1.0
+          )
+        );
+        var model =  this.glbalVar.gbViewer.scene.primitives.add(
+          this.Cesium.Model.fromGltf({
+            url: "../../../zhenghe10.gltf", //模型文件相对路径
+            modelMatrix: modelMatrix,
+            scale: 1,
+            //调整模型在地图中的大小
+          })
+        );
+        this.glbalVar.gbViewer.camera.flyTo({
+          //设置视角
+          destination:this.Cesium.Cartesian3.fromDegrees(
+            120.62898254394531,
+            30.02804946899414,
+            100.0
+          ),
+        });
+      }
     },
 
     exevat(Cesium, viewer) {
